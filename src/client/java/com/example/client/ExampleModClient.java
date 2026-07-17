@@ -40,7 +40,7 @@ public class ExampleModClient implements ClientModInitializer {
                 if (attribute == null) continue;
 
                 if (attribute.getModifier(SPEED_BOOST_ID) == null) {
-                    attribute.addTransitiveModifier(new AttributeModifier(
+                    attribute.addTransientModifier(new AttributeModifier(
                             SPEED_BOOST_ID,
                             100.0,
                             AttributeModifier.Operation.ADD_VALUE
