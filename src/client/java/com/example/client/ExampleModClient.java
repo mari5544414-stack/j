@@ -1,31 +1,54 @@
-Package com.example;
+package com.example.client;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
 
-import net.minecraft.resources.Identifier;
+public class ExampleModClient implements ClientModInitializer {
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+    private static final Identifier SPEED_BOOST_ID =
+            Identifier.of("modid", "speed_boost");
 
-public class ExampleMod implements ModInitializer {
-	public static final String MOD_ID = "modid";
+    private static KeyBinding speedKey;
 
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    @Override
+    public void onInitializeClient() {
+        speedKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.modid.speedboost",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_RIGHT_SHIFT,
+                "category.modid.keys"
+        ));
 
-	@Override
-	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (speedKey.wasPressed()) {
+                if (client.player == null) continue;
 
-		LOGGER.info("Hello Fabric world!");
-	}
+                EntityAttributeInstance attribute =
+                        client.player.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
 
-	public static Identifier id(String path) {
-		return Identifier.fromNamespaceAndPath(MOD_ID, path);
-	}
+                if (attribute == null) continue;
+
+                if (attribute.getModifier(SPEED_BOOST_ID) == null) {
+                    attribute.addTemporaryModifier(new EntityAttributeModifier(
+                            SPEED_BOOST_ID,
+                            100.0,
+                            EntityAttributeModifier.Operation.ADD_VALUE
+                    ));
+                    client.player.sendMessage(Text.literal("§aСкорость +100"), true);
+                } else {
+                    attribute.removeModifier(SPEED_BOOST_ID);
+                    client.player.sendMessage(Text.literal("§cСкорость сброшена"), true);
+                }
+            }
+        });
+    }
 }
- 
