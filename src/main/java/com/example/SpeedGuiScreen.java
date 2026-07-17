@@ -40,7 +40,7 @@ public class SpeedGuiScreen extends Screen {
 
     private void setPlayerSpeed(float speed) {
         if (this.client != null && this.client.player != null) {
-            // Изменяем атрибут скорости передвижения для версий Fabric 1.21+
+            // Используем корректный реестр атрибутов
             var attribute = this.client.player.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
             if (attribute != null) {
                 attribute.setBaseValue(speed);
@@ -51,7 +51,6 @@ public class SpeedGuiScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         this.renderBackground(context, mouseX, mouseY, delta);
-        // Рисуем заголовок меню
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, this.height / 2 - 60, 0xFFFFFF);
         super.render(context, mouseX, mouseY, delta);
     }
