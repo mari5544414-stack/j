@@ -2,8 +2,6 @@ package com.example;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -18,12 +16,11 @@ public class ExampleMod implements ModInitializer {
 		LOGGER.info("Hello Fabric world!");
 		System.out.println("--- MOD WORK ---");
 
-		// Регистрируем проверку нажатия клавиши каждый игровой тик на клиенте
+		// Регистрируем проверку тиков
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (client.player != null && client.getWindow() != null) {
-				// Проверяем, нажат ли Правый Shift через LWJGL напрямую
+				// Проверяем нажатие Правого Shift
 				if (GLFW.glfwGetKey(client.getWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS) {
-					// Если никакое меню еще не открыто, открываем наше GUI
 					if (client.currentScreen == null) {
 						client.setScreen(new SpeedGuiScreen());
 					}
