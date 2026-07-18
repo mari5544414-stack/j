@@ -1,4 +1,4 @@
 {
-     "key.modid.speedboost": "Speed Boost",
-     "category.modid.keys": "Example Mod"
+  "key.modid.openmenu": "Open Mod Menu",
+  "key.category.modid.menu_category": "Example Mod"
 }
