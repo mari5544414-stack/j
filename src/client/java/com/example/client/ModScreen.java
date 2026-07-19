@@ -14,7 +14,7 @@ public class ModScreen extends Screen {
     @Override
     protected void init() {
         int centerX = this.width / 2;
-        int startY = this.height / 2 - 30;
+        int startY = this.height / 2 - 45;
 
         this.addRenderableWidget(Button.builder(
                 Component.literal(noclipLabel()),
@@ -40,9 +40,22 @@ public class ModScreen extends Screen {
                 .build());
 
         this.addRenderableWidget(Button.builder(
+                Component.literal(godModeLabel()),
+                button -> {
+                    ModState.godModeEnabled = !ModState.godModeEnabled;
+                    button.setMessage(Component.literal(godModeLabel()));
+                    if (this.minecraft.player != null) {
+                        this.minecraft.player.getAbilities().invulnerable = ModState.godModeEnabled;
+                        this.minecraft.player.onUpdateAbilities();
+                    }
+                })
+                .bounds(centerX - 100, startY + 50, 200, 20)
+                .build());
+
+        this.addRenderableWidget(Button.builder(
                 Component.literal("Закрыть"),
                 button -> this.onClose())
-                .bounds(centerX - 100, startY + 55, 200, 20)
+                .bounds(centerX - 100, startY + 80, 200, 20)
                 .build());
     }
 
@@ -54,10 +67,14 @@ public class ModScreen extends Screen {
         return "Полёт: " + (ModState.flightEnabled ? "ВКЛ" : "ВЫКЛ");
     }
 
+    private String godModeLabel() {
+        return "Бессмертие: " + (ModState.godModeEnabled ? "ВКЛ" : "ВЫКЛ");
+    }
+
     @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         super.extractRenderState(graphics, mouseX, mouseY, delta);
-        graphics.text(this.font, "Mod Menu", this.width / 2 - 30, this.height / 2 - 60, 0xFFFFFFFF, true);
+        graphics.text(this.font, "Mod Menu", this.width / 2 - 30, this.height / 2 - 75, 0xFFFFFFFF, true);
     }
 
     @Override
