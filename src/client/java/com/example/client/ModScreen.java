@@ -1,7 +1,8 @@
 package com.example.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+// Возвращаем твой правильный импорт вместо GuiGraphics:
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -47,12 +48,12 @@ public class ModScreen extends Screen {
             }
         ).bounds(this.width / 2 - 100, 80, 200, 20).build());
 
-        // НОВОЕ: Поле для ввода ника
+        // Поле для ввода ника (для отслеживания)
         this.playerTargetBox = new EditBox(this.font, this.width / 2 - 100, 115, 140, 20, Component.literal("Ник игрока"));
         this.playerTargetBox.setMaxLength(16);
         this.addRenderableWidget(this.playerTargetBox);
 
-        // НОВОЕ: Кнопка для поиска координат
+        // Кнопка для поиска координат
         this.addRenderableWidget(Button.builder(
             Component.literal("Найти"),
             button -> {
@@ -64,7 +65,7 @@ public class ModScreen extends Screen {
     private void searchPlayer(String name) {
         if (this.minecraft == null || this.minecraft.level == null || name.isEmpty()) return;
 
-        // Перебираем всех игроков, о которых знает клиент (в зоне прорисовки)
+        // Поиск среди игроков в зоне прорисовки
         for (Player player : this.minecraft.level.players()) {
             if (player.getName().getString().equalsIgnoreCase(name)) {
                 int x = (int) player.getX();
@@ -74,15 +75,17 @@ public class ModScreen extends Screen {
                 return;
             }
         }
-        this.searchResult = Component.literal("§cИгрок не найден (Слишком далеко от вас)");
+        this.searchResult = Component.literal("§cИгрок не найден (Слишком далеко)");
     }
 
+    // ИСПРАВЛЕНИЕ: Используем правильный метод из твоего окружения
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick); // Затенение фона
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        // Отрисовываем базовые элементы экрана (кнопки, фон и т.д.)
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
         
-        // Отрисовка текста с результатами поиска
-        guiGraphics.drawCenteredString(this.font, this.searchResult, this.width / 2, 145, 0xFFFFFF);
+        // Отрисовываем текст с результатами поиска по центру под панелью
+        int textWidth = this.font.width(this.searchResult);
+        graphics.text(this.font, this.searchResult, this.width / 2 - textWidth / 2, 145, 0xFFFFFF);
     }
 }
