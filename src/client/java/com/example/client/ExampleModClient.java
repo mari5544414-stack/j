@@ -32,10 +32,16 @@ public class ExampleModClient implements ClientModInitializer {
                 }
             }
 
-            if (client.player != null && ModState.flightEnabled) {
-                client.player.getAbilities().mayfly = true;
-                client.player.getAbilities().flying = true;
-                client.player.onUpdateAbilities();
+            if (client.player != null) {
+                if (ModState.flightEnabled) {
+                    client.player.getAbilities().mayfly = true;
+                    client.player.getAbilities().flying = true;
+                    client.player.onUpdateAbilities();
+                }
+                if (ModState.godModeEnabled != client.player.getAbilities().invulnerable) {
+                    client.player.getAbilities().invulnerable = ModState.godModeEnabled;
+                    client.player.onUpdateAbilities();
+                }
             }
         });
     }
